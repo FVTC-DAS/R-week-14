@@ -22,6 +22,8 @@
 #     Gear X: 3 units of steel per unit
 #     Gear Y: 4 units of steel per unit
 #     Total available: 120 units
+# - Demand (Constraint C):
+#     The factory must produce at least 35 gears in total (Gear X + Gear Y).
 #
 # Decision variables:
 #   x1 = number of Gear X produced
@@ -41,15 +43,12 @@
 # 1. Objective function coefficients: objective.in
 # --------------------------------------------------------------------
 # We want to MINIMIZE total cost:
-#
+#   Cost = ? * x1 + ? * x2
 #
 # TODO:
 #   - Create a numeric vector called objective.in
 #   - The first element is the cost of Gear X
 #   - The second element is the cost of Gear Y
-
-# We want to MINIMIZE total cost:
-# Use the per-unit costs from the scenario above (Gear X, then Gear Y).
 
 objective.in <- c(
   # TODO: cost of Gear X,
@@ -60,31 +59,38 @@ objective.in <- c(
 # --------------------------------------------------------------------
 # 2. Constraint matrix: const.mat
 # --------------------------------------------------------------------
-# We have two constraints:
+# We now have THREE constraints:
 #
 #   Constraint A (Machine time):
-#       ? * x1 + ? * x2 <= ?
+#       ? * x1 + ? * x2 <= 60
 #
 #   Constraint B (Material):
-#       ? * x1 + ? * x2 <= ?
+#       ? * x1 + ? * x2 <= 120
 #
-# In matrix form, rows = constraints, columns = variables (x1, x2).
-
+#   Constraint C (Demand):
+#       ? * x1 + ? * x2 >= 35   (at least 35 gears total)
+#
+# In matrix form:
+#   - Rows = constraints (A, B, C)
+#   - Columns = variables (x1, x2)
 #
 # TODO:
-#   - Build a 2 x 2 matrix
+#   - Build a 3 x 2 matrix
 #   - Row 1 = coefficients for Constraint A (machine time)
 #   - Row 2 = coefficients for Constraint B (material)
+#   - Row 3 = coefficients for Constraint C (demand: x1 + x2 >= 35)
 #   - Use byrow = TRUE
 
 const.mat <- matrix(
   c(
-    # Row 1: coefficients for x1 and x2 in Constraint A
+    # Row 1: coefficients for x1 and x2 in Constraint A (machine time)
     # TODO: fill in 2 numbers here,
-    # Row 2: coefficients for x1 and x2 in Constraint B
+    # Row 2: coefficients for x1 and x2 in Constraint B (material)
+    # TODO: fill in 2 numbers here,
+    # Row 3: coefficients for x1 and x2 in Constraint C (demand: x1 + x2 >= 35)
     # TODO: fill in 2 numbers here
   ),
-  nrow = 2,
+  nrow = 3,
   byrow = TRUE
 )
 
@@ -92,38 +98,45 @@ const.mat <- matrix(
 # --------------------------------------------------------------------
 # 3. Constraint directions: const.dir
 # --------------------------------------------------------------------
-# Both constraints say "less than or equal to" the available resource.
+# Constraint directions match the inequality signs:
+#
+#   Constraint A (machine):  <=
+#   Constraint B (material): <=
+#   Constraint C (demand):   >=
 #
 # TODO:
-#   - Create a character vector const.dir
-#   - Use "<=" for each constraint
+#   - Create a character vector const.dir of length 3
+#   - Use "<=" for the first two constraints, ">=" for the demand constraint
 
 const.dir <- c(
   # TODO: direction for Constraint A,
-  # TODO: direction for Constraint B
+  # TODO: direction for Constraint B,
+  # TODO: direction for Constraint C
 )
 
 
 # --------------------------------------------------------------------
 # 4. Right-hand side: const.rhs
 # --------------------------------------------------------------------
-# The right-hand side (RHS) is the total available resource:
+# The right-hand side (RHS) is the total resource / requirement:
 #
-#   Constraint A: total machine time = 60 hours
-#   Constraint B: total steel        = 120 units
+#   Constraint A: total machine time = ? hours
+#   Constraint B: total steel        = ? units
+#   Constraint C: total demand       = at least ? gears
 #
 # TODO:
-#   - Create a numeric vector const.rhs with these two totals
+#   - Create a numeric vector const.rhs of length 3
 #   - Put them in the same order as the constraints in const.mat
 
 const.rhs <- c(
   # TODO: total machine time,
-  # TODO: total steel
+  # TODO: total steel,
+  # TODO: total demand (minimum total gears)
 )
 
 
 # --------------------------------------------------------------------
-# 5. Solve the model and inspect the result
+# 5. Solve the model and inspect the result (optional but recommended)
 # --------------------------------------------------------------------
 # After you have filled in objective.in, const.mat, const.dir, and const.rhs,
 # you can uncomment the code below to solve the linear program.
@@ -131,7 +144,7 @@ const.rhs <- c(
 # We are MINIMIZING cost, so use direction = "min".
 #
 # lp.solution <- lp(
-#   direction   = "min",
+#   direction    = "min",
 #   objective.in = objective.in,
 #   const.mat    = const.mat,
 #   const.dir    = const.dir,
