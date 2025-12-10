@@ -1,6 +1,7 @@
+# ====================================================================
 # Week 14 Formative: Optimization Problem Setup with lpSolve
 # Student: [Your Name Here]
-# 
+#
 # Goal:
 # Translate the Gear X / Gear Y word problem into the four inputs
 # lpSolve expects:
@@ -22,14 +23,16 @@
 #     Gear X: 3 units of steel per unit
 #     Gear Y: 4 units of steel per unit
 #     Total available: 120 units
-# - Demand (Constraint C):
-#     The factory must produce at least 35 gears in total (Gear X + Gear Y).
+# - Minimum Production Requirement (Constraint C):
+#     The total production of Gear X and Gear Y must be at least 35 units
 #
 # Decision variables:
 #   x1 = number of Gear X produced
 #   x2 = number of Gear Y produced
 #
 # Your job: fill in the TODOs below.
+# ====================================================================
+
 
 # --------------------------------------------------------------------
 # 0. Load lpSolve
@@ -39,11 +42,13 @@
 # Example: library(lpSolve)
 
 
+
 # --------------------------------------------------------------------
 # 1. Objective function coefficients: objective.in
 # --------------------------------------------------------------------
 # We want to MINIMIZE total cost:
-#   Cost = ? * x1 + ? * x2
+#
+#   Cost = (cost of Gear X * x1) + (cost of Gear Y * x2)
 #
 # TODO:
 #   - Create a numeric vector called objective.in
@@ -56,38 +61,39 @@ objective.in <- c(
 )
 
 
+
 # --------------------------------------------------------------------
 # 2. Constraint matrix: const.mat
 # --------------------------------------------------------------------
-# We now have THREE constraints:
+# We have THREE constraints:
 #
 #   Constraint A (Machine time):
-#       ? * x1 + ? * x2 <= 60
+#       ? * x1 + ? * x2 <= ?
 #
 #   Constraint B (Material):
-#       ? * x1 + ? * x2 <= 120
+#       ? * x1 + ? * x2 <= ?
 #
-#   Constraint C (Demand):
-#       ? * x1 + ? * x2 >= 35   (at least 35 gears total)
+#   Constraint C (Minimum production):
+#       ? * x1 + ? * x2 >= ?
 #
-# In matrix form:
-#   - Rows = constraints (A, B, C)
-#   - Columns = variables (x1, x2)
+# In matrix form, rows = constraints, columns = variables (x1, x2).
 #
 # TODO:
 #   - Build a 3 x 2 matrix
 #   - Row 1 = coefficients for Constraint A (machine time)
 #   - Row 2 = coefficients for Constraint B (material)
-#   - Row 3 = coefficients for Constraint C (demand: x1 + x2 >= 35)
+#   - Row 3 = coefficients for Constraint C (minimum production)
 #   - Use byrow = TRUE
 
 const.mat <- matrix(
   c(
-    # Row 1: coefficients for x1 and x2 in Constraint A (machine time)
+    # Row 1: coefficients for x1 and x2 in Constraint A
     # TODO: fill in 2 numbers here,
-    # Row 2: coefficients for x1 and x2 in Constraint B (material)
+
+    # Row 2: coefficients for x1 and x2 in Constraint B
     # TODO: fill in 2 numbers here,
-    # Row 3: coefficients for x1 and x2 in Constraint C (demand: x1 + x2 >= 35)
+
+    # Row 3: coefficients for x1 and x2 in Constraint C
     # TODO: fill in 2 numbers here
   ),
   nrow = 3,
@@ -95,18 +101,17 @@ const.mat <- matrix(
 )
 
 
+
 # --------------------------------------------------------------------
 # 3. Constraint directions: const.dir
 # --------------------------------------------------------------------
-# Constraint directions match the inequality signs:
-#
-#   Constraint A (machine):  <=
-#   Constraint B (material): <=
-#   Constraint C (demand):   >=
+# Constraint A and B are "less than or equal to"
+# Constraint C is "greater than or equal to"
 #
 # TODO:
-#   - Create a character vector const.dir of length 3
-#   - Use "<=" for the first two constraints, ">=" for the demand constraint
+#   - Create a character vector const.dir
+#   - Use "<=" for Constraints A and B
+#   - Use ">=" for Constraint C
 
 const.dir <- c(
   # TODO: direction for Constraint A,
@@ -115,28 +120,30 @@ const.dir <- c(
 )
 
 
+
 # --------------------------------------------------------------------
 # 4. Right-hand side: const.rhs
 # --------------------------------------------------------------------
-# The right-hand side (RHS) is the total resource / requirement:
+# The right-hand side (RHS) is the total available/required value:
 #
-#   Constraint A: total machine time = ? hours
-#   Constraint B: total steel        = ? units
-#   Constraint C: total demand       = at least ? gears
+#   Constraint A: total machine time        = 60 hours
+#   Constraint B: total steel               = 120 units
+#   Constraint C: minimum total production = 35 units
 #
 # TODO:
-#   - Create a numeric vector const.rhs of length 3
+#   - Create a numeric vector const.rhs with these three totals
 #   - Put them in the same order as the constraints in const.mat
 
 const.rhs <- c(
   # TODO: total machine time,
   # TODO: total steel,
-  # TODO: total demand (minimum total gears)
+  # TODO: minimum total production
 )
 
 
+
 # --------------------------------------------------------------------
-# 5. Solve the model and inspect the result (optional but recommended)
+# 5. Solve the model and inspect the result
 # --------------------------------------------------------------------
 # After you have filled in objective.in, const.mat, const.dir, and const.rhs,
 # you can uncomment the code below to solve the linear program.
